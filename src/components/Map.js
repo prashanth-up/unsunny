@@ -13,8 +13,8 @@ const containerStyle = {
 };
 
 const center = {
-  lat: -3.745,
-  lng: -38.523
+  lat: 39.9612, // Latitude for Columbus, Ohio
+  lng: -82.9988 // Longitude for Columbus, Ohio
 };
 
 function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
