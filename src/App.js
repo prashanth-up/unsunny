@@ -8,7 +8,7 @@ import './App.css'; // Ensure you have imported your CSS file
 function App() {
   return (
     <GoogleMapsLoader>
-      <Router>
+      <Router basename="/unsunny">
         <div className="app-container">
           <header className="header">
             <h1>UnSunny</h1>
