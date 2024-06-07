@@ -3,6 +3,7 @@ import { Autocomplete } from '@react-google-maps/api';
 import Map from '../components/Map';
 import './Home.css';
 
+
 function Home() {
   const [startPoint, setStartPoint] = useState('');
   const [endPoint, setEndPoint] = useState('');

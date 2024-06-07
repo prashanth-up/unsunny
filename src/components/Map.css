@@ -1,0 +1,105 @@
+.google-map {
+    width: 100vw;
+    height: 50vh;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+    animation: slideInUp 1s ease-in-out; /* Add slide-in animation */
+  }
+  
+  .google-map:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    animation: fadeIn 1s ease-in-out; /* Add fade-in animation */
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideInUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  
+  .submit-button, .toggle-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Add box-shadow transition */
+  }
+  
+  .submit-button:hover, .toggle-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow effect on hover */
+  }
+  
+  .analytics-container {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    width: 100%;
+    max-width: 800px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .analytics-container ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .analytics-container li {
+    margin-bottom: 10px;
+  }
+  
+  .charts-container {
+    margin-top: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+  }
+  
+  .chart-item {
+    width: 100%;
+    max-width: 800px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chart-description {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+  }
+  
