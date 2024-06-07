@@ -167,6 +167,18 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
     setShowSegments(!showSegments);
   };
 
+  const getBestSideSummary = () => {
+    const shadeRatio = (sunAnalytics.totalTimeInShade / (sunAnalytics.totalTimeInShade + sunAnalytics.totalTimeInSun)) * 100;
+    const sunRatio = 100 - shadeRatio;
+    const bestSide = shadeRatio > sunRatio ? 'right' : 'left';
+
+    return {
+      bestSide,
+      shadeRatio: shadeRatio.toFixed(2),
+      sunRatio: sunRatio.toFixed(2),
+    };
+  };
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: true,
@@ -272,6 +284,10 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
             <p>Total duration: {convertMinutesToDhms(sunAnalytics.totalTimeInShade + sunAnalytics.totalTimeInSun)}</p>
             <p>Time spent in shade: {convertMinutesToDhms(sunAnalytics.totalTimeInShade)}</p>
             <p>Time spent in sun: {convertMinutesToDhms(sunAnalytics.totalTimeInSun)}</p>
+            <h3>Best Side to Sit On</h3>
+            <p>Best side to sit on for maximum shade: {getBestSideSummary().bestSide}</p>
+            <p>Shade ratio: {getBestSideSummary().shadeRatio}%</p>
+            <p>Sun ratio: {getBestSideSummary().sunRatio}%</p>
           </div>
         )
       )}
