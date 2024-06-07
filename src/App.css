@@ -1,9 +1,11 @@
+/* Ensure the app-container takes the full height of the viewport */
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 }
 
+/* Header styles */
 .header {
   display: flex;
   justify-content: space-between;
@@ -11,13 +13,13 @@
   padding: 20px;
   background-color: #007bff;
   color: white;
-  box-sizing: border-box; /* Add this to ensure padding is included in the width */
-  width: 100%; /* Ensure the header takes full width */
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .header h1 {
   margin: 0;
-  font-size: 24px; /* Adjust font size as needed */
+  font-size: 24px;
 }
 
 .guide-button {
@@ -28,7 +30,6 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
-  margin-left: auto; /* Ensure button is pushed to the right */
 }
 
 .guide-button:hover {
@@ -36,18 +37,25 @@
   color: white;
 }
 
+/* Ensure the main content grows to fill the remaining space */
 .main-content {
   flex: 1;
   padding: 20px;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in width */
 }
 
+/* Footer styles */
 .footer {
   text-align: center;
   padding: 10px;
   background-color: #007bff;
   color: white;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding is included in width */
+  position: relative;
+  margin-top: auto;
 }
-
 
 .home-container {
   display: flex;
@@ -80,7 +88,7 @@
 
 .input-box {
   padding: 10px;
-  width: 800px;
+  width: 800px; /* Make the input box take the full width within the max-width constraint */
   max-width: 800px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -95,12 +103,13 @@
   border-radius: 4px;
   cursor: pointer;
   margin-top: 20px;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Add box-shadow transition */
 }
 
 .submit-button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow effect on hover */
 }
 
 .toggle-button {
@@ -111,12 +120,13 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Add box-shadow transition */
 }
 
 .toggle-button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow effect on hover */
 }
 
 .analytics-container {
