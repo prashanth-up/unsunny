@@ -26,8 +26,7 @@
     margin-bottom: 5px;
   }
   
-  .input-container input[type="text"],
-  .input-container input[type="datetime-local"] {
+  .input-box {
     padding: 10px;
     width: 100%;
     border: 1px solid #ccc;
@@ -67,5 +66,14 @@
     width: 100%;
     max-width: 600px;
     text-align: left;
+  }
+  
+  .analytics-container ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .analytics-container li {
+    margin-bottom: 10px;
   }
   

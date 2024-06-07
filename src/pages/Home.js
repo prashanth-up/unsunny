@@ -33,6 +33,7 @@ function Home() {
               placeholder="Enter start location"
               ref={startRef}
               id="start-point"
+              className="input-box"
             />
           </Autocomplete>
         </div>
@@ -44,6 +45,7 @@ function Home() {
               placeholder="Enter end location"
               ref={endRef}
               id="end-point"
+              className="input-box"
             />
           </Autocomplete>
         </div>
@@ -72,6 +74,7 @@ function Home() {
               type="datetime-local"
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
+              className="input-box"
             />
           </div>
         )}
