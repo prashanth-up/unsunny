@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
 import Map from '../components/Map';
+import './Home.css';
 
 function Home() {
   const [startPoint, setStartPoint] = useState('');
   const [endPoint, setEndPoint] = useState('');
-  const [role, setRole] = useState('driver');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., calculate routes, sun position, etc.)
-    console.log('Start Point:', startPoint);
-    console.log('End Point:', endPoint);
-    console.log('Role:', role);
+    setSubmitted(true);
   };
 
   return (
-    <div>
+    <div className="home-container">
       <h1>Welcome to UnSunny</h1>
       <p>Find the optimal route for maximum shade.</p>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="form-container">
+        <div className="input-container">
           <label>Start Point:</label>
           <input
             type="text"
@@ -28,7 +26,7 @@ function Home() {
             placeholder="Enter start location"
           />
         </div>
-        <div>
+        <div className="input-container">
           <label>End Point:</label>
           <input
             type="text"
@@ -37,16 +35,9 @@ function Home() {
             placeholder="Enter end location"
           />
         </div>
-        <div>
-          <label>Role:</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-            <option value="driver">Driver</option>
-            <option value="passenger">Passenger</option>
-          </select>
-        </div>
-        <button type="submit">Find Route</button>
+        <button type="submit" className="submit-button">Find Route</button>
       </form>
-      <Map />
+      {submitted && <Map startPoint={startPoint} endPoint={endPoint} />}
     </div>
   );
 }

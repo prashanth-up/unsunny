@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, LoadScript } from '@react-google-maps/api';
+import { GoogleMap, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
 import { getSunPosition } from '../services/sunPosition';
 
 const containerStyle = {
@@ -12,29 +12,82 @@ const center = {
   lng: -38.523
 };
 
-function Map() {
-  const [sunPosition, setSunPosition] = useState({});
+function Map({ startPoint, endPoint }) {
+  const [directions, setDirections] = useState(null);
+  const [sunAnalytics, setSunAnalytics] = useState('');
+  const [error, setError] = useState('');
+
+  const geocode = async (address) => {
+    return new Promise((resolve, reject) => {
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address }, (results, status) => {
+        if (status === window.google.maps.GeocoderStatus.OK) {
+          resolve(results[0].geometry.location);
+        } else {
+          reject(`Geocode was not successful for the following reason: ${status}`);
+        }
+      });
+    });
+  };
+
+  const fetchRoute = async () => {
+    try {
+      const startLocation = await geocode(startPoint);
+      const endLocation = await geocode(endPoint);
+      const directionsService = new window.google.maps.DirectionsService();
+
+      directionsService.route(
+        {
+          origin: startLocation,
+          destination: endLocation,
+          travelMode: window.google.maps.TravelMode.DRIVING
+        },
+        (result, status) => {
+          if (status === window.google.maps.DirectionsStatus.OK) {
+            setDirections(result);
+            calculateSunAnalytics(result.routes[0]);
+          } else {
+            setError(`Error fetching directions: ${status}`);
+          }
+        }
+      );
+    } catch (error) {
+      setError(error);
+    }
+  };
 
   useEffect(() => {
-    const date = new Date();
-    const position = getSunPosition(date, center.lat, center.lng);
-    setSunPosition(position);
-  }, []);
+    if (startPoint && endPoint) {
+      fetchRoute();
+    }
+  }, [startPoint, endPoint]);
+
+  const calculateSunAnalytics = (route) => {
+    const legs = route.legs;
+    let analytics = '';
+
+    legs.forEach((leg) => {
+      const steps = leg.steps;
+      steps.forEach((step) => {
+        const { lat, lng } = step.start_location;
+        const sunPosition = getSunPosition(new Date(), lat(), lng());
+        analytics += `Segment from ${step.start_location} to ${step.end_location}: Sun Altitude - ${sunPosition.altitude.toFixed(2)}°, Sun Azimuth - ${sunPosition.azimuth.toFixed(2)}°. `;
+        const side = sunPosition.azimuth > 0 ? 'right' : 'left';
+        analytics += `Sit on the ${side} side for maximum shade. `;
+      });
+    });
+
+    setSunAnalytics(analytics);
+  };
 
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={10}
-      >
-        {/* Add markers or other map features */}
-        <div>
-          <p>Sun Altitude: {sunPosition.altitude}</p>
-          <p>Sun Azimuth: {sunPosition.azimuth}</p>
-        </div>
-      </GoogleMap>
-    </LoadScript>
+    <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
+      {directions && <DirectionsRenderer directions={directions} />}
+      <div>
+        <p>{sunAnalytics}</p>
+      </div>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+    </GoogleMap>
   );
 }
 
