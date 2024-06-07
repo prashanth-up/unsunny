@@ -4,7 +4,7 @@ import { getSunPosition } from '../services/sunPosition';
 import { getLocationName } from '../services/geocode';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
-import { convertMinutesToDhms } from '../utils/timeConversion'; // Import the utility function
+import { convertMinutesToDhms } from '../utils/timeConversion';
 import './Map.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend);
@@ -25,6 +25,7 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
   const [error, setError] = useState('');
   const [showVisual, setShowVisual] = useState(false);
   const [locationNames, setLocationNames] = useState({});
+  const [showSegments, setShowSegments] = useState(false);
 
   const geocode = async (address) => {
     return new Promise((resolve, reject) => {
@@ -162,6 +163,10 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
     setShowVisual(!showVisual);
   };
 
+  const toggleSegments = () => {
+    setShowSegments(!showSegments);
+  };
+
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: true,
@@ -249,16 +254,21 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
         sunAnalytics && (
           <div className="analytics-container">
             <h2>Sun Analytics</h2>
-            <ul>
-              {sunAnalytics.analytics.map((data, index) => (
-                <li key={index}>
-                  <p>
-                    Segment from {data.startName} to {data.endName}: Sun Altitude - {data.altitude}°, Sun Azimuth -{' '}
-                    {data.azimuth}°. Sit on the {data.side} side for maximum shade.
-                  </p>
-                </li>
-              ))}
-            </ul>
+            <button className="toggle-button" onClick={toggleSegments}>
+              {showSegments ? 'Hide Segment Data' : 'Show Segment Data'}
+            </button>
+            {showSegments && (
+              <ul>
+                {sunAnalytics.analytics.map((data, index) => (
+                  <li key={index}>
+                    <p>
+                      Segment from {data.startName} to {data.endName}: Sun Altitude - {data.altitude}°, Sun Azimuth -{' '}
+                      {data.azimuth}°. Sit on the {data.side} side for maximum shade.
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
             <p>Total duration: {convertMinutesToDhms(sunAnalytics.totalTimeInShade + sunAnalytics.totalTimeInSun)}</p>
             <p>Time spent in shade: {convertMinutesToDhms(sunAnalytics.totalTimeInShade)}</p>
             <p>Time spent in sun: {convertMinutesToDhms(sunAnalytics.totalTimeInSun)}</p>
