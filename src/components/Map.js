@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, DirectionsService, DirectionsRenderer, Autocomplete } from '@react-google-maps/api';
 import { getSunPosition } from '../services/sunPosition';
 
 const containerStyle = {
@@ -12,7 +12,7 @@ const center = {
   lng: -38.523
 };
 
-function Map({ startPoint, endPoint }) {
+function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
   const [directions, setDirections] = useState(null);
   const [sunAnalytics, setSunAnalytics] = useState('');
   const [error, setError] = useState('');
@@ -65,12 +65,13 @@ function Map({ startPoint, endPoint }) {
   const calculateSunAnalytics = (route) => {
     const legs = route.legs;
     let analytics = '';
+    const time = useCurrentTime ? new Date() : new Date(selectedTime);
 
     legs.forEach((leg) => {
       const steps = leg.steps;
       steps.forEach((step) => {
         const { lat, lng } = step.start_location;
-        const sunPosition = getSunPosition(new Date(), lat(), lng());
+        const sunPosition = getSunPosition(time, lat(), lng());
         analytics += `Segment from ${step.start_location} to ${step.end_location}: Sun Altitude - ${sunPosition.altitude.toFixed(2)}°, Sun Azimuth - ${sunPosition.azimuth.toFixed(2)}°. `;
         const side = sunPosition.azimuth > 0 ? 'right' : 'left';
         analytics += `Sit on the ${side} side for maximum shade. `;
