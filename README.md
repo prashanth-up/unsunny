@@ -15,6 +15,26 @@ UnSunny is a React-based web application that helps users find the optimal side 
 
 Check out the live demo of UnSunny [here](https://prashanth-up.github.io/unsunny).
 
+<p align="center">
+<img src="gh_assets/2.png" width="600">
+</p>
+<!-- <p align="center">
+<img src="gh_assets/3.png" width="600">
+</p>
+<p align="center">
+<img src="gh_assets/4.png" width="600">
+</p>
+<p align="center">
+<img src="gh_assets/5.png" width="600">
+</p>
+<p align="center">
+<img src="gh_assets/6.png" width="600">
+</p>
+<p align="center">
+<img src="gh_assets/7.png" width="600">
+</p> -->
+
+
 ## Installation
 
 To run this project locally, follow these steps:
