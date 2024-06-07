@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleMap, DirectionsRenderer } from '@react-google-maps/api';
 import { getSunPosition } from '../services/sunPosition';
+import { getLocationName } from '../services/geocode';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
 
@@ -21,6 +22,7 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
   const [sunAnalytics, setSunAnalytics] = useState(null);
   const [error, setError] = useState('');
   const [showVisual, setShowVisual] = useState(false);
+  const [locationNames, setLocationNames] = useState({});
 
   const geocode = async (address) => {
     return new Promise((resolve, reject) => {
@@ -65,38 +67,43 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
     if (startPoint && endPoint) {
       fetchRoute();
     }
-  }, [startPoint, endPoint]);
+  }, [startPoint, endPoint, selectedTime]);
 
-  const calculateSunAnalytics = (route) => {
+  const calculateSunAnalytics = async (route) => {
     const legs = route.legs;
     let analytics = [];
     const time = useCurrentTime ? new Date() : new Date(selectedTime);
     let totalTimeInShade = 0;
     let totalTimeInSun = 0;
+    let sunBelowHorizon = true;
 
-    legs.forEach((leg) => {
-      const steps = leg.steps;
-      steps.forEach((step, index) => {
-        const { lat, lng } = step.start_location;
-        const sunPosition = getSunPosition(time, lat(), lng());
-        console.log(`Step ${index + 1}: Sun Altitude - ${sunPosition.altitude}, Sun Azimuth - ${sunPosition.azimuth}`);
+    for (let leg of legs) {
+      for (let step of leg.steps) {
+        const lat = step.start_location.lat();
+        const lng = step.start_location.lng();
+        console.log(`Calculating Sun Position for (${lat}, ${lng}) at ${time}`);
+        const sunPosition = getSunPosition(time, lat, lng);
+        console.log(`Sun Position for (${lat}, ${lng}): Altitude - ${sunPosition.altitude}, Azimuth - ${sunPosition.azimuth}`);
+        
+        if (isNaN(sunPosition.altitude) || isNaN(sunPosition.azimuth)) {
+          console.error(`Sun Position calculation failed for (${lat}, ${lng}) at ${time}`);
+          continue;
+        }
+
         const segmentTime = step.duration.value / 60; // Convert to minutes
 
         if (sunPosition.altitude < 0) {
           console.log(`Skipping segment with negative altitude: ${sunPosition.altitude}`);
-          return; // Skip segments where the sun is below the horizon
+          continue; // Skip segments where the sun is below the horizon
         }
+
+        sunBelowHorizon = false;
 
         // Determine the side based on azimuth and direction of the segment
         let side;
-        const nextStep = steps[index + 1];
-        if (nextStep) {
-          const nextLatLng = nextStep.end_location;
-          const heading = calculateHeading(lat(), lng(), nextLatLng.lat(), nextLatLng.lng());
-          side = determineSideBasedOnHeadingAndSun(heading, sunPosition.azimuth);
-        } else {
-          side = sunPosition.azimuth > 0 && sunPosition.azimuth < 180 ? 'right' : 'left';
-        }
+        const nextStep = step.end_location;
+        const heading = calculateHeading(lat, lng, nextStep.lat(), nextStep.lng());
+        side = determineSideBasedOnHeadingAndSun(heading, sunPosition.azimuth);
 
         if (side === 'right') {
           totalTimeInShade += segmentTime;
@@ -104,21 +111,35 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
           totalTimeInSun += segmentTime;
         }
 
+        const startLocationName = await getLocationName(lat, lng);
+        const endLocationName = await getLocationName(nextStep.lat(), nextStep.lng());
+
+        setLocationNames((prev) => ({
+          ...prev,
+          [`${lat},${lng}`]: startLocationName,
+          [`${nextStep.lat()},${nextStep.lng()}`]: endLocationName
+        }));
+
         analytics.push({
-          start: step.start_location,
-          end: step.end_location,
+          start: { lat: lat, lng: lng },
+          end: { lat: nextStep.lat(), lng: nextStep.lng() },
+          startName: startLocationName,
+          endName: endLocationName,
           altitude: sunPosition.altitude ? sunPosition.altitude.toFixed(2) : 'N/A',
           azimuth: sunPosition.azimuth ? sunPosition.azimuth.toFixed(2) : 'N/A',
           side,
           segmentTime
         });
-      });
-    });
+      }
+    }
 
-    console.log(`Total time in shade: ${totalTimeInShade} minutes`);
-    console.log(`Total time in sun: ${totalTimeInSun} minutes`);
-
-    setSunAnalytics({ analytics, totalTimeInShade, totalTimeInSun });
+    if (sunBelowHorizon) {
+      setSunAnalytics(null);
+      setError('The sun is below the horizon at this time. Please select a different time.');
+    } else {
+      setSunAnalytics({ analytics, totalTimeInShade, totalTimeInSun });
+      setError('');  // Reset the error message
+    }
   };
 
   const calculateHeading = (lat1, lng1, lat2, lng2) => {
@@ -184,19 +205,29 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
   } : null;
 
   return (
-    <div>
+    <div className="home-container">
       <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
         {directions && <DirectionsRenderer directions={directions} />}
       </GoogleMap>
       <button className="toggle-button" onClick={toggleVisual}>
         {showVisual ? 'Show Text Data' : 'Show Visual Data'}
       </button>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       {showVisual ? (
         sunAnalytics && (
-          <div className="chart-container">
-            <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
-            <Line data={sunPositionData} options={{ responsive: true, maintainAspectRatio: false }} />
-            <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: false }} />
+          <div className="charts-container">
+            <div className="chart-item">
+              <Bar data={chartData} options={{ responsive: true, maintainAspectRatio: true, aspectRatio: 2 }} />
+              <p className="chart-description">Time spent in shade vs. time spent in sun.</p>
+            </div>
+            <div className="chart-item">
+              <Line data={sunPositionData} options={{ responsive: true, maintainAspectRatio: true, aspectRatio: 2 }} />
+              <p className="chart-description">Sun altitude and azimuth over the course of the trip.</p>
+            </div>
+            <div className="chart-item">
+              <Pie data={pieData} options={{ responsive: true, maintainAspectRatio: true, aspectRatio: 2 }} />
+              <p className="chart-description">Proportion of time spent in shade vs. sun.</p>
+            </div>
           </div>
         )
       ) : (
@@ -207,8 +238,7 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
               {sunAnalytics.analytics.map((data, index) => (
                 <li key={index}>
                   <p>
-                    Segment from ({data.start.lat()}, {data.start.lng()}) to ({data.end.lat()}, {data.end.lng()}):
-                    Sun Altitude - {data.altitude}°, Sun Azimuth - {data.azimuth}°. Sit on the {data.side} side for maximum shade.
+                    Segment from {data.startName} to {data.endName}: Sun Altitude - {data.altitude}°, Sun Azimuth - {data.azimuth}°. Sit on the {data.side} side for maximum shade.
                   </p>
                 </li>
               ))}
@@ -219,7 +249,6 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
           </div>
         )
       )}
-      {error && <div style={{ color: 'red' }}>{error}</div>}
     </div>
   );
 }

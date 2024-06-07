@@ -1,110 +1,135 @@
 .home-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-    max-width: 800px; /* increased max-width for better input box sizing */
-  }
-  
-  .input-container {
-    margin-bottom: 10px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .input-container label {
-    margin-bottom: 5px;
-  }
-  
-  .input-box {
-    padding: 10px;
-    width: 800px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  .submit-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .radio-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .radio-container label {
-    margin-right: 20px;
-  }
-  
-  .analytics-container {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    width: 100%;
-    max-width: 800px; /* increased max-width to match form-container */
-    text-align: left;
-  }
-  
-  .analytics-container ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .analytics-container li {
-    margin-bottom: 10px;
-  }
-  
-  .chart-container {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    width: 100%;
-    max-width: 800px;
-    text-align: left;
-    height: 400px; /* fixed height for the chart */
-  }
-  
-  .toggle-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .toggle-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .google-map {
-    width: 100vw; /* make map edge-to-edge */
-    height: 50vh; /* adjust height as needed */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Parent container */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%; /* Full width of the screen */
+  max-width: 800px; /* Maximum width constraint */
+  padding: 0 20px; /* Add some padding for better spacing */
+}
+
+/* Input container to ensure proper alignment */
+.input-container {
+  margin-bottom: 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Label for the input field */
+.input-container label {
+  margin-bottom: 5px;
+}
+
+/* Input box with responsive width */
+.input-box {
+  padding: 10px;
+  width: 800px; /* Full width of the parent container */
+  max-width: 800px; /* Maximum width constraint */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.radio-container {
+  display: flex;
+  align-items: center;
+}
+
+.radio-container label {
+  margin-right: 20px;
+}
+
+.analytics-container {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  width: 100%;
+  max-width: 800px; /* increased max-width to match form-container */
+  text-align: left; /* Changed from center to left for better readability */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.analytics-container ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%; /* Ensure full width for better alignment */
+}
+
+.analytics-container li {
+  margin-bottom: 10px;
+}
+
+.charts-container {
+  margin-top: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+}
+
+.chart-item {
+  width: 100%;
+  max-width: 800px;
+  height: 400px; /* fixed height for the charts */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart-description {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.toggle-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  background-color: #0056b3;
+}
+
+.google-map {
+  width: 100vw; /* make map edge-to-edge */
+  height: 50vh; /* adjust height as needed */
+}
