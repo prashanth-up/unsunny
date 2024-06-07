@@ -4,7 +4,8 @@ import { getSunPosition } from '../services/sunPosition';
 import { getLocationName } from '../services/geocode';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend } from 'chart.js';
-import './Map.css'; // Import the new CSS file
+import { convertMinutesToDhms } from '../utils/timeConversion'; // Import the utility function
+import './Map.css';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Title, Tooltip, Legend);
 
@@ -258,9 +259,9 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
                 </li>
               ))}
             </ul>
-            <p>Total duration: {(sunAnalytics.totalTimeInShade + sunAnalytics.totalTimeInSun).toFixed(2)} minutes</p>
-            <p>Time spent in shade: {sunAnalytics.totalTimeInShade.toFixed(2)} minutes</p>
-            <p>Time spent in sun: {sunAnalytics.totalTimeInSun.toFixed(2)} minutes</p>
+            <p>Total duration: {convertMinutesToDhms(sunAnalytics.totalTimeInShade + sunAnalytics.totalTimeInSun)}</p>
+            <p>Time spent in shade: {convertMinutesToDhms(sunAnalytics.totalTimeInShade)}</p>
+            <p>Time spent in sun: {convertMinutesToDhms(sunAnalytics.totalTimeInSun)}</p>
           </div>
         )
       )}
