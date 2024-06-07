@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { GoogleMap, DirectionsService, DirectionsRenderer, Autocomplete } from '@react-google-maps/api';
+import { GoogleMap, DirectionsRenderer } from '@react-google-maps/api';
 import { getSunPosition } from '../services/sunPosition';
 
 const containerStyle = {
@@ -72,7 +72,9 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
       steps.forEach((step) => {
         const { lat, lng } = step.start_location;
         const sunPosition = getSunPosition(time, lat(), lng());
-        analytics += `Segment from ${step.start_location} to ${step.end_location}: Sun Altitude - ${sunPosition.altitude.toFixed(2)}°, Sun Azimuth - ${sunPosition.azimuth.toFixed(2)}°. `;
+        const stepInfo = `Segment from (${step.start_location.lat()}, ${step.start_location.lng()}) to (${step.end_location.lat()}, ${step.end_location.lng()}): Sun Altitude - ${sunPosition.altitude.toFixed(2)}°, Sun Azimuth - ${sunPosition.azimuth.toFixed(2)}°. `;
+        console.log(stepInfo);
+        analytics += stepInfo;
         const side = sunPosition.azimuth > 0 ? 'right' : 'left';
         analytics += `Sit on the ${side} side for maximum shade. `;
       });
@@ -82,13 +84,18 @@ function Map({ startPoint, endPoint, selectedTime, useCurrentTime }) {
   };
 
   return (
-    <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-      {directions && <DirectionsRenderer directions={directions} />}
-      <div>
-        <p>{sunAnalytics}</p>
-      </div>
+    <div>
+      <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
+        {directions && <DirectionsRenderer directions={directions} />}
+      </GoogleMap>
+      {sunAnalytics && (
+        <div className="analytics-container">
+          <h2>Sun Analytics</h2>
+          <p>{sunAnalytics}</p>
+        </div>
+      )}
       {error && <div style={{ color: 'red' }}>{error}</div>}
-    </GoogleMap>
+    </div>
   );
 }
 
